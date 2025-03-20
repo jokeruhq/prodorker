@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Google Dorking Tool</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #0f172a;
+            --foreground: #f8fafc;
+            --card: #1e293b;
+            --card-foreground: #f8fafc;
+            --border: #334155;
+            --input: #1e293b;
+            --ring: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--foreground);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .disclaimer {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background-color: var(--input);
+            color: var(--foreground);
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1 0 33%;
+                text-align: center;
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Google Dorking Tool</h1>
+            <p class="subtitle">Construct powerful search queries for security research and information gathering</p>
+            
+            <div class="disclaimer">
+                <strong>Important:</strong> This tool is intended for legitimate security research, penetration testing, and educational purposes only. Always ensure you have proper authorization before conducting searches on third-party systems or information.
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="email">Email</div>
+            <div class="tab" data-tab="domain">Domain/URL</div>
+            <div class="tab" data-tab="files">Files</div>
+            <div class="tab" data-tab="social">Social/Username</div>
+            <div class="tab" data-tab="ip">IP/Network</div>
+            <div class="tab" data-tab="phone">Phone Numbers</div>
+        </div>
+
+        <div id="email" class="tab-content active">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    Email Finder
+                </h2>
+                <div class="info-box">
+                    Find email addresses associated with domains, organizations, or individuals using advanced search operators.
+                </div>
+                <div class="form-group">
+                    <label for="email-domain">Domain or Organization</label>
+                    <input type="text" id="email-domain" placeholder="example.com">
+                </div>
+                <div class="form-group">
+                    <label for="email-person">Person Name (Optional)</label>
+                    <input type="text" id="email-person" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email-format">Email Format</label>
+                    <select id="email-format">
+                        <option value="any">Any Format</option>
+                        <option value="gmail">Gmail (@gmail.com)</option>
+                        <option value="company">Company Email</option>
+                        <option value="outlook">Outlook/Hotmail</option>
+                    </select>
+                </div>
+                <button onclick="generateEmailDork()">Generate Dork</button>
+                <div id="email-result" class="result"></div>
+                <button id="email-copy" class="copy-btn" onclick="copyToClipboard('email-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="domain" class="tab-content">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 18H3.6c-.9 0-1.6-.7-1.6-1.6V7.6c0-.9.7-1.6 1.6-1.6h14.8c.9 0 1.6.7 1.6 1.6v3.9"/><path d="m22 12-5.5 5.5-2.7-2.7"/><path d="M14 13.5V7.6"/><path d="M10 7.6v10.8"/><path d="M6 7.6v10.8"/></svg>
+                    Domain & URL Explorer
+                </h2>
+                <div class="info-box">
+                    Find specific information within domains, subdomains, or discover related websites.
+                </div>
+                <div class="form-group">
+                    <label for="domain-name">Domain Name</label>
+                    <input type="text" id="domain-name" placeholder="example.com">
+                </div>
+                <div class="form-group">
+                    <label for="domain-type">Search Type</label>
+                    <select id="domain-type">
+                        <option value="site">Entire Site (site:)</option>
+                        <option value="inurl">In URL (inurl:)</option>
+                        <option value="intitle">In Title (intitle:)</option>
+                        <option value="related">Related Sites (related:)</option>
+                        <option value="subdomains">Subdomains</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="domain-keywords">Keywords (Optional)</label>
+                    <input type="text" id="domain-keywords" placeholder="login admin dashboard">
+                </div>
+                <button onclick="generateDomainDork()">Generate Dork</button>
+                <div id="domain-result" class="result"></div>
+                <button id="domain-copy" class="copy-btn" onclick="copyToClipboard('domain-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="files" class="tab-content">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    File Finder
+                </h2>
+                <div class="info-box">
+                    Discover exposed documents, spreadsheets, databases, and other files on websites.
+                </div>
+                <div class="form-group">
+                    <label for="file-type">File Type</label>
+                    <select id="file-type">
+                        <option value="pdf">PDF Documents</option>
+                        <option value="doc">Word Documents (doc, docx)</option>
+                        <option value="xls">Excel Spreadsheets (xls, xlsx)</option>
+                        <option value="ppt">PowerPoint (ppt, pptx)</option>
+                        <option value="txt">Text Files (txt)</option>
+                        <option value="csv">CSV Files</option>
+                        <option value="sql">SQL Files</option>
+                        <option value="xml">XML Files</option>
+                        <option value="json">JSON Files</option>
+                        <option value="log">Log Files</option>
+                        <option value="bak">Backup Files (bak)</option>
+                        <option value="config">Configuration Files</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="file-domain">Domain (Optional)</label>
+                    <input type="text" id="file-domain" placeholder="example.com">
+                </div>
+                <div class="form-group">
+                    <label for="file-keywords">Keywords (Optional)</label>
+                    <input type="text" id="file-keywords" placeholder="confidential report financial">
+                </div>
+                <button onclick="generateFileDork()">Generate Dork</button>
+                <div id="file-result" class="result"></div>
+                <button id="file-copy" class="copy-btn" onclick="copyToClipboard('file-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="social" class="tab-content">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Social Media & Username Finder
+                </h2>
+                <div class="info-box">
+                    Find social media profiles and username information across the web.
+                </div>
+                <div class="form-group">
+                    <label for="social-username">Username or Real Name</label>
+                    <input type="text" id="social-username" placeholder="johndoe">
+                </div>
+                <div class="form-group">
+                    <label for="social-platform">Platform (Optional)</label>
+                    <select id="social-platform">
+                        <option value="any">Any Platform</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="twitter">Twitter/X</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="github">GitHub</option>
+                        <option value="reddit">Reddit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="social-additional">Additional Information (Optional)</label>
+                    <input type="text" id="social-additional" placeholder="company, location, interests">
+                </div>
+                <button onclick="generateSocialDork()">Generate Dork</button>
+                <div id="social-result" class="result"></div>
+                <button id="social-copy" class="copy-btn" onclick="copyToClipboard('social-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="ip" class="tab-content">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/></svg>
+                    IP & Network Information
+                </h2>
+                <div class="info-box">
+                    Find information related to IP addresses, networks, and connected devices.
+                </div>
+                <div class="form-group">
+                    <label for="ip-address">IP Address or Range</label>
+                    <input type="text" id="ip-address" placeholder="192.168.1.1 or 192.168.1.0/24">
+                </div>
+                <div class="form-group">
+                    <label for="ip-type">Search Type</label>
+                    <select id="ip-type">
+                        <option value="exact">Exact IP</option>
+                        <option value="range">IP Range</option>
+                        <option value="devices">Connected Devices</option>
+                        <option value="cameras">IP Cameras</option>
+                        <option value="routers">Routers & Network Devices</option>
+                    </select>
+                </div>
+                <button onclick="generateIPDork()">Generate Dork</button>
+                <div id="ip-result" class="result"></div>
+                <button id="ip-copy" class="copy-btn" onclick="copyToClipboard('ip-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="phone" class="tab-content">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    Phone Number Finder
+                </h2>
+                <div class="info-box">
+                    Search for phone numbers that may be exposed on websites or documents.
+                </div>
+                <div class="form-group">
+                    <label for="phone-format">Phone Format</label>
+                    <select id="phone-format">
+                        <option value="any">Any Format</option>
+                        <option value="us">US Format (XXX-XXX-XXXX)</option>
+                        <option value="international">International Format (+XX...)</option>
+                        <option value="custom">Custom Format</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phone-custom">Custom Format (Optional)</label>
+                    <input type="text" id="phone-custom" placeholder="e.g., 555-555-5555">
+                </div>
+                <div class="form-group">
+                    <label for="phone-domain">Domain or Organization (Optional)</label>
+                    <input type="text" id="phone-domain" placeholder="example.com">
+                </div>
+                <button onclick="generatePhoneDork()">Generate Dork</button>
+                <div id="phone-result" class="result"></div>
+                <button id="phone-copy" class="copy-btn" onclick="copyToClipboard('phone-result')">Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Advanced Google Dorking Tool | For educational and security research purposes only</p>
+            <p>Always use responsibly and ethically</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Email dork generator
+        function generateEmailDork() {
+            const domain = document.getElementById('email-domain').value.trim();
+            const person = document.getElementById('email-person').value.trim();
+            const format = document.getElementById('email-format').value;
+            
+            let dork = '';
+            
+            if (domain) {
+                if (format === 'company') {
+                    dork = `"@${domain}" `;
+                } else {
+                    dork = `"${domain}" `;
+                }
+            }
+            
+            if (person) {
+                const names = person.split(' ');
+                if (names.length > 1) {
+                    dork += `("${names[0]}" "${names[1]}" OR "${names[0][0]}${names[1]}" OR "${names[0]}.${names[1]}") `;
+                } else {
+                    dork += `"${names[0]}" `;
+                }
+            }
+            
+            switch(format) {
+                case 'gmail':
+                    dork += '"@gmail.com" ';
+                    break;
+                case 'outlook':
+                    dork += '("@outlook.com" OR "@hotmail.com" OR "@live.com") ';
+                    break;
+                case 'any':
+                    dork += '("@" email OR mail) ';
+                    break;
+            }
+            
+            dork += 'filetype:pdf OR filetype:doc OR filetype:docx OR filetype:txt OR filetype:xls OR filetype:xlsx OR intext:email OR intext:contact';
+            
+            document.getElementById('email-result').textContent = dork;
+        }
+
+        // Domain dork generator
+        function generateDomainDork() {
+            const domain = document.getElementById('domain-name').value.trim();
+            const type = document.getElementById('domain-type').value;
+            const keywords = document.getElementById('domain-keywords').value.trim();
+            
+            let dork = '';
+            
+            if (!domain && type !== 'related') {
+                document.getElementById('domain-result').textContent = 'Please enter a domain name';
+                return;
+            }
+            
+            switch(type) {
+                case 'site':
+                    dork = `site:${domain} `;
+                    break;
+                case 'inurl':
+                    dork = `inurl:${domain} `;
+                    break;
+                case 'intitle':
+                    dork = `intitle:${domain} `;
+                    break;
+                case 'related':
+                    dork = `related:${domain} `;
+                    break;
+                case 'subdomains':
+                    dork = `site:*.${domain} -site:www.${domain} `;
+                    break;
+            }
+            
+            if (keywords) {
+                dork += keywords;
+            }
+            
+            document.getElementById('domain-result').textContent = dork;
+        }
+
+        // File dork generator
+        function generateFileDork() {
+            const fileType = document.getElementById('file-type').value;
+            const domain = document.getElementById('file-domain').value.trim();
+            const keywords = document.getElementById('file-keywords').value.trim();
+            
+            let dork = '';
+            
+            switch(fileType) {
+                case 'pdf':
+                    dork = 'filetype:pdf ';
+                    break;
+                case 'doc':
+                    dork = 'filetype:doc OR filetype:docx ';
+                    break;
+                case 'xls':
+                    dork = 'filetype:xls OR filetype:xlsx ';
+                    break;
+                case 'ppt':
+                    dork = 'filetype:ppt OR filetype:pptx ';
+                    break;
+                case 'txt':
+                    dork = 'filetype:txt ';
+                    break;
+                case 'csv':
+                    dork = 'filetype:csv ';
+                    break;
+                case 'sql':
+                    dork = 'filetype:sql ';
+                    break;
+                case 'xml':
+                    dork = 'filetype:xml ';
+                    break;
+                case 'json':
+                    dork = 'filetype:json ';
+                    break;
+                case 'log':
+                    dork = 'filetype:log ';
+                    break;
+                case 'bak':
+                    dork = 'filetype:bak OR inurl:backup OR inurl:.bak ';
+                    break;
+                case 'config':
+                    dork = 'inurl:config OR inurl:configuration OR inurl:settings OR filetype:config OR filetype:ini ';
+                    break;
+            }
+            
+            if (domain) {
+                dork += `site:${domain} `;
+            }
+            
+            if (keywords) {
+                dork += keywords;
+            }
+            
+            document.getElementById('file-result').textContent = dork;
+        }
+
+        // Social media dork generator
+        function generateSocialDork() {
+            const username = document.getElementById('social-username').value.trim();
+            const platform = document.getElementById('social-platform').value;
+            const additional = document.getElementById('social-additional').value.trim();
+            
+            if (!username) {
+                document.getElementById('social-result').textContent = 'Please enter a username or real name';
+                return;
+            }
+            
+            let dork = `"${username}" `;
+            
+            switch(platform) {
+                case 'facebook':
+                    dork += 'site:facebook.com ';
+                    break;
+                case 'twitter':
+                    dork += 'site:twitter.com OR site:x.com ';
+                    break;
+                case 'linkedin':
+                    dork += 'site:linkedin.com ';
+                    break;
+                case 'instagram':
+                    dork += 'site:instagram.com ';
+                    break;
+                case 'github':
+                    dork += 'site:github.com ';
+                    break;
+                case 'reddit':
+                    dork += 'site:reddit.com ';
+                    break;
+                case 'any':
+                    dork += '(site:facebook.com OR site:twitter.com OR site:linkedin.com OR site:instagram.com OR site:github.com OR site:reddit.com) ';
+                    break;
+            }
+            
+            if (additional) {
+                dork += additional;
+            }
+            
+            document.getElementById('social-result').textContent = dork;
+        }
+
+        // IP dork generator
+        function generateIPDork() {
+            const ip = document.getElementById('ip-address').value.trim();
+            const type = document.getElementById('ip-type').value;
+            
+            if (!ip) {
+                document.getElementById('ip-result').textContent = 'Please enter an IP address or range';
+                return;
+            }
+            
+            let dork = '';
+            
+            switch(type) {
+                case 'exact':
+                    dork = `"${ip}" `;
+                    break;
+                case 'range':
+                    dork = `"${ip.split('.').slice(0, 3).join('.')}" `;
+                    break;
+                case 'devices':
+                    dork = `"${ip}" intitle:"index of" OR inurl:admin OR intext:login `;
+                    break;
+                case 'cameras':
+                    dork = `intitle:"live view" OR intitle:"webcam" OR inurl:"ViewerFrame?Mode=" OR intext:"Network Camera" "${ip}" `;
+                    break;
+                case 'routers':
+                    dork = `intitle:"router" OR intitle:"login" inurl:admin "${ip}" `;
+                    break;
+            }
+            
+            document.getElementById('ip-result').textContent = dork;
+        }
+
+        // Phone dork generator
+        function generatePhoneDork() {
+            const format = document.getElementById('phone-format').value;
+            const custom = document.getElementById('phone-custom').value.trim();
+            const domain = document.getElementById('phone-domain').value.trim();
+            
+            let dork = '';
+            
+            switch(format) {
+                case 'us':
+                    dork = 'intext:"xxx-xxx-xxxx" OR intext:"(xxx) xxx-xxxx" ';
+                    break;
+                case 'international':
+                    dork = 'intext:"+xx" ';
+                    break;
+                case 'custom':
+                    if (custom) {
+                        dork = `intext:"${custom}" `;
+                    } else {
+                        dork = 'intext:phone OR intext:contact OR intext:tel ';
+                    }
+                    break;
+                case 'any':
+                    dork = 'intext:phone OR intext:contact OR intext:tel ';
+                    break;
+            }
+            
+            if (domain) {
+                dork += `site:${domain} `;
+            }
+            
+            document.getElementById('phone-result').textContent = dork;
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const button = document.getElementById(elementId + '-copy');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
