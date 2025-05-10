@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Google Dorking Tool</title>
+    <title>ProDorker Dorking Tool</title>
     <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/16/10003/10003015.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/32/10003/10003015.png">
     <link rel="icon" type="image/png" sizes="64x64" href="https://cdn-icons-png.flaticon.com/64/10003/10003015.png">
@@ -203,7 +203,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Advanced Google Dorking Tool</h1>
+            <h1>ProDorker Dorking Tool</h1>
             <p class="subtitle">Construct powerful search queries for security research and information gathering</p>
             
             <div class="disclaimer">
@@ -422,26 +422,22 @@
         </div>
 
         <footer>
-            <p>Advanced Google Dorking Tool | For educational and security research purposes only</p>
+            <p>ProDorker Dorking Tool | For educational and security research purposes only</p>
             <p>Always use responsibly and ethically</p>
         </footer>
     </div>
 
     <script>
-        // Tab switching functionality
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Remove active class from all tabs and content
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 
-                // Add active class to clicked tab and corresponding content
                 tab.classList.add('active');
                 document.getElementById(tab.dataset.tab).classList.add('active');
             });
         });
 
-        // Email dork generator
         function generateEmailDork() {
             const domain = document.getElementById('email-domain').value.trim();
             const person = document.getElementById('email-person').value.trim();
@@ -483,7 +479,6 @@
             document.getElementById('email-result').textContent = dork;
         }
 
-        // Domain dork generator
         function generateDomainDork() {
             const domain = document.getElementById('domain-name').value.trim();
             const type = document.getElementById('domain-type').value;
@@ -521,7 +516,6 @@
             document.getElementById('domain-result').textContent = dork;
         }
 
-        // File dork generator
         function generateFileDork() {
             const fileType = document.getElementById('file-type').value;
             const domain = document.getElementById('file-domain').value.trim();
@@ -579,7 +573,6 @@
             document.getElementById('file-result').textContent = dork;
         }
 
-        // Social media dork generator
         function generateSocialDork() {
             const username = document.getElementById('social-username').value.trim();
             const platform = document.getElementById('social-platform').value;
@@ -623,7 +616,6 @@
             document.getElementById('social-result').textContent = dork;
         }
 
-        // IP dork generator
         function generateIPDork() {
             const ip = document.getElementById('ip-address').value.trim();
             const type = document.getElementById('ip-type').value;
@@ -656,7 +648,6 @@
             document.getElementById('ip-result').textContent = dork;
         }
 
-        // Phone dork generator
         function generatePhoneDork() {
             const format = document.getElementById('phone-format').value;
             const custom = document.getElementById('phone-custom').value.trim();
@@ -690,7 +681,6 @@
             document.getElementById('phone-result').textContent = dork;
         }
 
-        // Copy to clipboard function
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).textContent;
             navigator.clipboard.writeText(text).then(() => {
